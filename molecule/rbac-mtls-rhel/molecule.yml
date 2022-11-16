@@ -98,6 +98,20 @@ platforms:
     hostname: kafka-connect1.confluent
     groups:
       - kafka_connect
+      - syslog
+    image: geerlingguy/docker-centos8-ansible
+    dockerfile: ../Dockerfile-rhel-base.j2
+    command: ""
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    networks:
+      - name: confluent
+  - name: kafka-connect2
+    hostname: kafka-connect2.confluent
+    groups:
+      - kafka_connect
+      - elastic
     image: geerlingguy/docker-centos8-ansible
     dockerfile: ../Dockerfile-rhel-base.j2
     command: ""
@@ -194,11 +208,18 @@ provisioner:
       schema_registry:
         schema_registry_cluster_name: Test-Schema
 
-      kafka_connect:
-        kafka_connect_cluster_name: Test-Connect
-
+      elastic:
+        kafka_connect_group_id: connect-elastic
+        kafka_connect_cluster_name: connect-elastic
+      syslog:
+        kafka_connect_group_id: connect-syslog
+        kafka_connect_cluster_name: connect-syslog
       ksql:
         ksql_cluster_name: Test-Ksql
+      control_center:
+        kafka_connect_cluster_ansible_group_names:
+          - syslog
+          - elastic
 
       ldap_server:
         ldaps_enabled: false

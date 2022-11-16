@@ -115,8 +115,8 @@
         service_cert: /var/ssl/private/kafka_rest.crt
         service_key: /var/ssl/private/kafka_rest.key
 
-- name: Verify - kafka_connect
-  hosts: kafka_connect
+- name: Verify - kafka_connect1
+  hosts: kafka-connect1
   gather_facts: false
   tasks:
     - import_role:
@@ -126,6 +126,15 @@
         file_path: /etc/kafka/connect-distributed.properties
         property: public.key.path
         expected_value: /var/ssl/private/public.pem
+
+    - name: Check line properties file
+      import_role:
+        name: confluent.test
+        tasks_from: check_property.yml
+      vars:
+        file_path: /etc/kafka/connect-distributed.properties
+        property: group.id
+        expected_value: connect-syslog
 
     - name: Get Connect Cluster Details
       uri:
@@ -154,88 +163,101 @@
           -d '{"clusters":{"kafka-cluster":"{{kafka_cluster_id}}","connect-cluster":"connect-cluster"}}'
 
     # TODO add another user in molecule.yml and use this user instead of mds
-    - name: Create secret
-      shell: |
-        curl -u mds:password -H 'Content-Type: application/json' \
-          --cacert /var/ssl/private/ca.crt --key /var/ssl/private/kafka_connect.key --cert /var/ssl/private/kafka_connect.crt \
-          -d '{"secret": "t1"}' -k https://localhost:8083/secret/paths/conn1/keys/topic/versions
+    # - name: Create secret
+    #   shell: |
+    #     curl -u mds:password -H 'Content-Type: application/json' \
+    #       --cacert /var/ssl/private/ca.crt --key /var/ssl/private/kafka_connect.key --cert /var/ssl/private/kafka_connect.crt \
+    #       -d '{"secret": "t1"}' -k https://localhost:8083/secret/paths/conn1/keys/topic/versions
 
-    - name: Create test sink file
-      shell: |
-        touch /tmp/file-sink-test.txt
-        chmod 666 /tmp/file-sink-test.txt
+    # - name: Create test sink file
+    #   shell: |
+    #     touch /tmp/file-sink-test.txt
+    #     chmod 666 /tmp/file-sink-test.txt
 
-    - name: Create connector
-      shell: |
-        curl -k -X PUT https://localhost:8083/connectors/conn1/config \
-          -H "Content-Type: application/json" -u mds:password \
-          --cacert /var/ssl/private/ca.crt --key /var/ssl/private/kafka_connect.key --cert /var/ssl/private/kafka_connect.crt \
-          -d '{"connector.class": "org.apache.kafka.connect.tools.VerifiableSinkConnector",
-          "tasks.max": "1",
-          "topics": "${secret:conn1:topic}",
-          "file": "/tmp/file-sink-test.txt",
-          "principal.service.name": "mds",
-          "principal.service.password": "password",
-          "consumer.override.security.protocol": "SASL_SSL",
-          "consumer.override.sasl.mechanism": "OAUTHBEARER",
-          "consumer.override.sasl.login.callback.handler.class": "io.confluent.kafka.clients.plugins.auth.token.TokenUserLoginCallbackHandler",
-          "consumer.override.bootstrap.servers": "kafka-broker1:9092"}'
+    # - name: Create connector
+    #   shell: |
+    #     curl -k -X PUT https://localhost:8083/connectors/conn1/config \
+    #       -H "Content-Type: application/json" -u mds:password \
+    #       --cacert /var/ssl/private/ca.crt --key /var/ssl/private/kafka_connect.key --cert /var/ssl/private/kafka_connect.crt \
+    #       -d '{"connector.class": "org.apache.kafka.connect.tools.VerifiableSinkConnector",
+    #       "tasks.max": "1",
+    #       "topics": "${secret:conn1:topic}",
+    #       "file": "/tmp/file-sink-test.txt",
+    #       "principal.service.name": "mds",
+    #       "principal.service.password": "password",
+    #       "consumer.override.security.protocol": "SASL_SSL",
+    #       "consumer.override.sasl.mechanism": "OAUTHBEARER",
+    #       "consumer.override.sasl.login.callback.handler.class": "io.confluent.kafka.clients.plugins.auth.token.TokenUserLoginCallbackHandler",
+    #       "consumer.override.bootstrap.servers": "kafka-broker1:9092"}'
 
-    - name: Wait connector status to return 200
-      uri:
-        url: https://localhost:8083/connectors/conn1/status
-        status_code: 200
-        client_cert: /var/ssl/private/kafka_connect.crt
-        client_key: /var/ssl/private/kafka_connect.key
-        ca_path: /var/ssl/private/ca.crt
-        validate_certs: false
-        url_username: mds
-        url_password: password
-        force_basic_auth: true
-      register: result
-      until: result.status == 200
-      retries: 10
-      delay: 5
+    # - name: Wait connector status to return 200
+    #   uri:
+    #     url: https://localhost:8083/connectors/conn1/status
+    #     status_code: 200
+    #     client_cert: /var/ssl/private/kafka_connect.crt
+    #     client_key: /var/ssl/private/kafka_connect.key
+    #     ca_path: /var/ssl/private/ca.crt
+    #     validate_certs: false
+    #     url_username: mds
+    #     url_password: password
+    #     force_basic_auth: true
+    #   register: result
+    #   until: result.status == 200
+    #   retries: 10
+    #   delay: 5
 
-    - name: Wait connector status to return Running
-      uri:
-        url: https://localhost:8083/connectors/conn1/status
-        status_code: 200
-        validate_certs: false
-        url_username: mds
-        url_password: password
-        client_cert: /var/ssl/private/kafka_connect.crt
-        client_key: /var/ssl/private/kafka_connect.key
-        ca_path: /var/ssl/private/ca.crt
-        force_basic_auth: true
-      register: connector_status_response
-      until: connector_status_response.json.connector.state == 'RUNNING'
-      retries: 10
-      delay: 5
+    # - name: Wait connector status to return Running
+    #   uri:
+    #     url: https://localhost:8083/connectors/conn1/status
+    #     status_code: 200
+    #     validate_certs: false
+    #     url_username: mds
+    #     url_password: password
+    #     client_cert: /var/ssl/private/kafka_connect.crt
+    #     client_key: /var/ssl/private/kafka_connect.key
+    #     ca_path: /var/ssl/private/ca.crt
+    #     force_basic_auth: true
+    #   register: connector_status_response
+    #   until: connector_status_response.json.connector.state == 'RUNNING'
+    #   retries: 10
+    #   delay: 5
 
-    - name: Wait connector tasks to return Running
-      uri:
-        url: https://localhost:8083/connectors/conn1/status
-        status_code: 200
-        validate_certs: false
-        url_username: mds
-        url_password: password
-        client_cert: /var/ssl/private/kafka_connect.crt
-        client_key: /var/ssl/private/kafka_connect.key
-        force_basic_auth: true
-      register: connector_status_response
-      until: connector_status_response.json.tasks[0].state == 'RUNNING'
-      retries: 10
-      delay: 5
+    # - name: Wait connector tasks to return Running
+    #   uri:
+    #     url: https://localhost:8083/connectors/conn1/status
+    #     status_code: 200
+    #     validate_certs: false
+    #     url_username: mds
+    #     url_password: password
+    #     client_cert: /var/ssl/private/kafka_connect.crt
+    #     client_key: /var/ssl/private/kafka_connect.key
+    #     force_basic_auth: true
+    #   register: connector_status_response
+    #   until: connector_status_response.json.tasks[0].state == 'RUNNING'
+    #   retries: 10
+    #   delay: 5
 
-    - import_role:
+    # - import_role:
+    #     name: confluent.test
+    #     tasks_from: check_tls_version.yml
+    #   vars:
+    #     service_port: 8083
+    #     service_ca: /var/ssl/private/ca.crt
+    #     service_cert: /var/ssl/private/kafka_connect.crt
+    #     service_key: /var/ssl/private/kafka_connect.key
+
+- name: Verify - kafka_connect2
+  hosts: kafka-connect2
+  gather_facts: false
+  tasks:
+    - name: Check line properties file
+      import_role:
         name: confluent.test
-        tasks_from: check_tls_version.yml
+        tasks_from: check_property.yml
       vars:
-        service_port: 8083
-        service_ca: /var/ssl/private/ca.crt
-        service_cert: /var/ssl/private/kafka_connect.crt
-        service_key: /var/ssl/private/kafka_connect.key
+        file_path: /etc/kafka/connect-distributed.properties
+        property: group.id
+        expected_value: connect-elastic
 
 - name: Verify - ksql
   hosts: ksql
@@ -270,14 +292,32 @@
         property: public.key.path
         expected_value: /var/ssl/private/public.pem
 
-    - import_role:
+    # - import_role:
+    #     name: confluent.test
+    #     tasks_from: check_tls_version.yml
+    #   vars:
+    #     service_port: 9021
+    #     service_ca: /var/ssl/private/ca.crt
+    #     service_cert: /var/ssl/private/kafka_connect.crt
+    #     service_key: /var/ssl/private/kafka_connect.key
+
+    - name: Check line connect cluster2
+      import_role:
         name: confluent.test
-        tasks_from: check_tls_version.yml
+        tasks_from: check_property.yml
       vars:
-        service_port: 9021
-        service_ca: /var/ssl/private/ca.crt
-        service_cert: /var/ssl/private/kafka_connect.crt
-        service_key: /var/ssl/private/kafka_connect.key
+        file_path: /etc/confluent-control-center/control-center-production.properties
+        property: confluent.controlcenter.connect.connect-elastic.cluster
+        expected_value: https://kafka-connect2:8083
+
+    - name: Check line connect cluster3
+      import_role:
+        name: confluent.test
+        tasks_from: check_property.yml
+      vars:
+        file_path: /etc/confluent-control-center/control-center-production.properties
+        property: confluent.controlcenter.connect.connect-syslog.cluster
+        expected_value: https://kafka-connect1:8083
 
 - name: Validate Cluster Registry
   hosts: schema_registry

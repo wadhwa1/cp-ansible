@@ -122,6 +122,7 @@ platforms:
     hostname: kafka-connect1${BUILD_NUMBER}.confluent${BUILD_NUMBER}
     groups:
       - kafka_connect
+      - syslog
     image: geerlingguy/docker-centos7-ansible
     # dockerfile: ../Dockerfile.j2
     command: ""
@@ -130,6 +131,19 @@ platforms:
     privileged: true
     networks:
       - name: confluent${BUILD_NUMBER}
+  - name: kafka-connect2
+    hostname: kafka-connect2.confluent
+    groups:
+      - kafka_connect
+      - elastic
+    image: geerlingguy/docker-centos8-ansible
+#    dockerfile: ../Dockerfile-rhel-java17.j2
+    command: ""
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    networks:
+      - name: confluent
   - name: ksql1${BUILD_NUMBER}
     hostname: ksql1${BUILD_NUMBER}.confluent${BUILD_NUMBER}
     groups:
@@ -285,3 +299,38 @@ provisioner:
             password: user2p
             uid: 9991
             guid: 91
+      kafka_connect:
+        children:
+          syslog:
+          elastic:
+      # connect clusters
+      syslog:
+        kafka_connect_group_id: connect-syslog
+        # Create Connectors not working w ssl on molecule
+        kafka_connect_ssl_enabled: false
+        kafka_connect_ssl_mutual_auth_enabled: false
+        kafka_connect_connectors:
+          - name: sample-connector-1
+            config:
+              connector.class: "org.apache.kafka.connect.tools.VerifiableSinkConnector"
+              tasks.max: "1"
+              file: "/etc/kafka/connect-distributed.properties"
+              topics: "test_topic"
+      elastic:
+        kafka_connect_group_id: connect-elastic
+        kafka_connect_cluster_name: connect-elastic
+        # Create Connectors not working w ssl
+        kafka_connect_ssl_enabled: false
+        kafka_connect_ssl_mutual_auth_enabled: false
+        kafka_connect_connectors:
+          - name: sample-connector-2
+            config:
+              connector.class: "org.apache.kafka.connect.tools.VerifiableSinkConnector"
+              tasks.max: "1"
+              file: "/etc/kafka/connect-distributed.properties"
+              topics: "test_topic"
+
+      control_center:
+        kafka_connect_cluster_ansible_group_names:
+          - syslog
+          - elastic

@@ -23,11 +23,15 @@ jobs:
 
       - name: Install test dependencies.
         run: pip3 install ansible molecule[docker] yamllint ansible-lint
+      - name: Debug1
+        run: |
+          pwd
+          ls
 
       - name: Run Molecule tests.
-        run: molecule test
+        run: molecule --debug converge -s plain-rhel
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
           MOLECULE_DISTRO: ${{ matrix.distro }}
-        working-directory: molecule/plain-rhel
+        working-directory: molecule

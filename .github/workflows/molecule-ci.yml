@@ -13,9 +13,6 @@ jobs:
           - debian10
 
     steps:
-      - name: Check out the codebase.
-        uses: actions/checkout@v2
-
       - name: Set up Python 3.
         uses: actions/setup-python@v2
         with:
@@ -23,18 +20,16 @@ jobs:
 
       - name: Install test dependencies.
         run: pip3 install ansible molecule[docker] yamllint ansible-lint
-      - name: Debug1
-        run: |
-          pwd
-          ls
 
       - name: Run Molecule tests.
-        run: molecule --debug converge -s plain-rhel
+        run: |
+          git clone https://github.com/confluentinc/cp-ansible.git ansible_collections/confluent/platform
+          cd ansible_collections/confluent/platform
+          molecule --debug converge -s plain-rhel
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
           MOLECULE_DISTRO: ${{ matrix.distro }}
-        working-directory: molecule
 
       - name: Setup tmate session
         if: ${{ failure() }}

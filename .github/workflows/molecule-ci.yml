@@ -25,3 +25,7 @@ jobs:
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
+
+      - name: Setup SSH session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3

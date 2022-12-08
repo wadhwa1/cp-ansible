@@ -6,10 +6,6 @@ jobs:
   test:
     name: Molecule
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        distro:
-          - rockylinux8
 
     steps:
       - name: Set up Python 3.
@@ -29,4 +25,3 @@ jobs:
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
-          MOLECULE_DISTRO: ${{ matrix.distro }}

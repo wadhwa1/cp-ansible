@@ -18,6 +18,7 @@ platforms:
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    cgroupns_mode: host
     privileged: true
     networks:
       - name: confluent
@@ -30,6 +31,7 @@ platforms:
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    cgroupns_mode: host
     privileged: true
     networks:
       - name: confluent
@@ -42,6 +44,7 @@ platforms:
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    cgroupns_mode: host
     privileged: true
     networks:
       - name: confluent
@@ -54,6 +57,7 @@ platforms:
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    cgroupns_mode: host
     privileged: true
     networks:
       - name: confluent
@@ -66,6 +70,7 @@ platforms:
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    cgroupns_mode: host
     privileged: true
     networks:
       - name: confluent
@@ -78,6 +83,7 @@ platforms:
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    cgroupns_mode: host
     privileged: true
     networks:
       - name: confluent
@@ -90,6 +96,7 @@ platforms:
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    cgroupns_mode: host
     privileged: true
     published_ports:
       - "9021:9021"

@@ -15,11 +15,11 @@ jobs:
 
       - name: Install test dependencies.
         run: |
-          pip3 install ansible==6.4.0 molecule "molecule-docker<=2.0.0" yamllint ansible-lint
+          pip3 install ansible==4.10.0 molecule "molecule-docker<=2.0.0" yamllint ansible-lint
 
       - name: Run Molecule tests.
         run: |
-          git clone https://github.com/confluentinc/cp-ansible.git ansible_collections/confluent/platform
+          git clone -b ANSIENG-1649 https://github.com/wadhwa1/cp-ansible.git ansible_collections/confluent/platform
           cd ansible_collections/confluent/platform
           molecule --debug converge -s plain-rhel
         env:

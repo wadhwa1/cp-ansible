@@ -22,8 +22,8 @@ Notable enhancements
 - Added provision to configure Kafka Connect Replicator custom rest extension classes
 - Enable running playbook in ansible check mode
 - For archive installations, fixed logic to use `config_prefix` variable for zookeeper, kafka broker, schema registry, kafka connect
-- Make Pip install and Upgrade pip tasks skippable using `tags: package`
-
+- Skip "Install pip" and "Upgrade pip" tasks using `package` tag
+- Introduced new tag `cp_package` for installing/ upgrading confluent packages
 
 v7.2.2
 ======

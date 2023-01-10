@@ -183,6 +183,79 @@
         fail_msg: "Connector not created"
         quiet: true
 
+    - name: test data
+      set_fact:
+        update_existing_connector_input:
+          - name: sample-connector-1
+            config:
+              connector.class: "org.apache.kafka.connect.tools.VerifiableSinkConnector"
+              tasks.max: "5"
+              file: "/etc/kafka/connect-distributed.properties"
+              topics: "test_topic"
+
+        add_new_connector:
+          - name: sample-connector-1
+            config:
+              connector.class: "org.apache.kafka.connect.tools.VerifiableSinkConnector"
+              tasks.max: "5"
+              file: "/etc/kafka/connect-distributed.properties"
+              topics: "test_topic"
+          - name: sample-connector-2
+            config:
+              connector.class: "org.apache.kafka.connect.tools.VerifiableSinkConnector"
+              tasks.max: "1"
+              file: "/etc/kafka/server.properties"
+              topics: "new_test_topic"
+
+        add_bad_request_connector:
+          - name: sample-connector-1
+            config:
+              connector.class: "org.apache.kafka.connect.tools.VerifiableSinkConnector"
+              tasks.max: "5"
+              file: "/etc/kafka/connect-distributed.properties"
+              topics: "test_topic"
+          - name: sample-connector-2
+            config:
+              connector.class: "io.confluent.connect.s3.S3SinkConnector"
+              tasks.max: "1"
+              topics: "foo"
+
+        add_non_existent_connector:
+          - name: sample-connector-3
+            config:
+              connector.class: "org.apache.kafka.connect.mirror.MirrorHeartbeatConnector"
+              tasks.max: "1"
+              file: "/etc/kafka/connect-distributed.properties"
+              topics: "foo"
+
+    - import_role:
+        name: confluent.test
+        tasks_from: check_connector.yml
+      vars:
+        active_connectors_input: "{{ update_existing_connector_input }}"
+        expected_message: "Connectors added or updated: sample-connector-1: connector configuration updated."
+
+    - import_role:
+        name: confluent.test
+        tasks_from: check_connector.yml
+      vars:
+        active_connectors_input: "{{ add_new_connector }}"
+        expected_message: "Connectors added or updated: sample-connector-1: no configuration change, sample-connector-2: new connector added."
+
+    - import_role:
+        name: confluent.test
+        tasks_from: check_connector.yml
+      vars:
+        active_connectors_input: "{{ add_bad_request_connector }}"
+        expected_message: "Connectors added or updated: sample-connector-1: no configuration change, sample-connector-2: ERROR error while updating configuration (HTTP Error 400: Bad Request)."
+
+    - import_role:
+        name: confluent.test
+        tasks_from: check_connector.yml
+      vars:
+        active_connectors_input: "{{ add_non_existent_connector }}"
+        expected_message: "Connectors added or updated: sample-connector-1: no configuration change, sample-connector-2: ERROR error while updating configuration (HTTP Error 400: Bad Request)."
+
     - import_role:
         name: confluent.test
         tasks_from: check_property.yml

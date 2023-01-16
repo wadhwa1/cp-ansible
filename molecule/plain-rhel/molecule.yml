@@ -33,6 +33,30 @@ platforms:
     privileged: true
     networks:
       - name: confluent
+  - name: kafka-broker2
+    hostname: kafka-broker2.confluent
+    groups:
+      - kafka_broker
+    image: geerlingguy/docker-centos7-ansible
+    dockerfile: ../Dockerfile.j2
+    command: ""
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    networks:
+      - name: confluent
+  - name: kafka-broker3
+    hostname: kafka-broker3.confluent
+    groups:
+      - kafka_broker
+    image: geerlingguy/docker-centos7-ansible
+    dockerfile: ../Dockerfile.j2
+    command: ""
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    networks:
+      - name: confluent
   - name: schema-registry1
     hostname: schema-registry1.confluent
     groups:
@@ -97,13 +121,30 @@ platforms:
       - name: confluent
 provisioner:
   inventory:
+    host_vars:
+      kafka-broker1:
+        kafka_broker_custom_properties:
+          broker.rack: dc1
+          broker.id: 11
+          num.partitions: 1
+          replica.selector.class: org.apache.kafka.common.replica.RackAwareReplicaSelector
+      kafka-broker2:
+        kafka_broker_custom_properties:
+          broker.rack: dc2
+          broker.id: 12
+          num.partitions: 2
+          replica.selector.class: org.apache.kafka.common.replica.RackAwareReplicaSelector
+
     group_vars:
       all:
         sasl_protocol: plain
         kafka_broker_configure_control_plane_listener: true
         zookeeper_custom_properties:
           dataLogDir: /opt/zookeeper
-
+        kafka_broker_custom_properties:
+          confluent.security.event.logger.exporter.kafka.topic.replicas: 4
+          auto.create.topics.enable: false
+          authorizer.class.name: kafka.security.authorizer.AclAuthorizer
         kafka_connect_confluent_hub_plugins:
           - jcustenborder/kafka-connect-spooldir:2.0.43
 
@@ -146,3 +187,11 @@ provisioner:
           Description: Custom C3 description
 
         control_center_log4j_root_logger: INFO, stdout, main
+      kafka_broker:
+        kafka_broker_custom_properties:
+          confluent.support.metrics.enable: false
+          confluent.balancer.topic.replication.factor: 4
+          confluent.license.topic.replication.factor: 4
+          confluent.metadata.topic.replication.factor: 4
+
+

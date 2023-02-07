@@ -10,7 +10,7 @@ platforms:
     hostname: zookeeper1.confluent
     groups:
       - zookeeper
-    image: utkarsh5474/docker-centos7-ansible
+    image: wadhwa1/cp-ansible:centos7
     dockerfile: ../Dockerfile.j2
     command: ""
     volumes:
@@ -22,7 +22,7 @@ platforms:
     hostname: kafka-broker1.confluent
     groups:
       - kafka_broker
-    image: utkarsh5474/docker-centos7-ansible
+    image: wadhwa1/cp-ansible:centos7
     dockerfile: ../Dockerfile.j2
     command: ""
     volumes:
@@ -34,7 +34,7 @@ platforms:
     hostname: control-center1.confluent
     groups:
       - control_center
-    image: utkarsh5474/docker-centos7-ansible
+    image: wadhwa1/cp-ansible:centos7
     dockerfile: ../Dockerfile.j2
     command: ""
     volumes:

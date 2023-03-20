@@ -163,7 +163,7 @@ provisioner:
     group_vars:
       all:
         scenario_name: rbac-scram-custom-rhel
-
+        deployment_strategy: rolling
         # Test additional scram user
         sasl_scram_users:
           client:

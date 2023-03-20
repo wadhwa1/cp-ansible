@@ -189,7 +189,7 @@ provisioner:
     group_vars:
       all:
         scenario_name: rbac-mds-plain-custom-rhel
-
+        deployment_strategy: rolling
         ssl_enabled: true
         sasl_protocol: plain
 

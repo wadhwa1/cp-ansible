@@ -1,5 +1,5 @@
 ---
-### Installs two Confluent Platform Clusters on Debian9.
+### Installs two Confluent Platform Clusters on Debian10.
 ### RBAC enabled.
 ### Remote MDS from Cluster2 to Cluster1 (MDS).
 ### Custom TLS certificates.
@@ -40,8 +40,8 @@ platforms:
     groups:
       - zookeeper
       - mds
-    image: geerlingguy/docker-debian9-ansible
-    dockerfile: ../Dockerfile-debian.j2
+    image: geerlingguy/docker-debian10-ansible
+    dockerfile: ../Dockerfile-debian10.j2
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -53,8 +53,8 @@ platforms:
     groups:
       - kafka_broker
       - mds
-    image: geerlingguy/docker-debian9-ansible
-    dockerfile: ../Dockerfile-debian.j2
+    image: geerlingguy/docker-debian10-ansible
+    dockerfile: ../Dockerfile-debian10.j2
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -66,8 +66,8 @@ platforms:
     groups:
       - kafka_broker
       - mds
-    image: geerlingguy/docker-debian9-ansible
-    dockerfile: ../Dockerfile-debian.j2
+    image: geerlingguy/docker-debian10-ansible
+    dockerfile: ../Dockerfile-debian10.j2
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -80,8 +80,8 @@ platforms:
     groups:
       - zookeeper2
       - cluster2
-    image: geerlingguy/docker-debian9-ansible
-    dockerfile: ../Dockerfile-debian.j2
+    image: geerlingguy/docker-debian10-ansible
+    dockerfile: ../Dockerfile-debian10.j2
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -93,8 +93,8 @@ platforms:
     groups:
       - kafka_broker2
       - cluster2
-    image: geerlingguy/docker-debian9-ansible
-    dockerfile: ../Dockerfile-debian.j2
+    image: geerlingguy/docker-debian10-ansible
+    dockerfile: ../Dockerfile-debian10.j2
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -106,8 +106,8 @@ platforms:
     groups:
       - kafka_broker2
       - cluster2
-    image: geerlingguy/docker-debian9-ansible
-    dockerfile: ../Dockerfile-debian.j2
+    image: geerlingguy/docker-debian10-ansible
+    dockerfile: ../Dockerfile-debian10.j2
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -119,8 +119,8 @@ platforms:
     groups:
       - kafka_broker2
       - cluster2
-    image: geerlingguy/docker-debian9-ansible
-    dockerfile: ../Dockerfile-debian.j2
+    image: geerlingguy/docker-debian10-ansible
+    dockerfile: ../Dockerfile-debian10.j2
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -132,8 +132,8 @@ platforms:
     groups:
       - schema_registry2
       - cluster2
-    image: geerlingguy/docker-debian9-ansible
-    dockerfile: ../Dockerfile-debian.j2
+    image: geerlingguy/docker-debian10-ansible
+    dockerfile: ../Dockerfile-debian10.j2
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -145,8 +145,8 @@ platforms:
     groups:
       - kafka_rest2
       - cluster2
-    image: geerlingguy/docker-debian9-ansible
-    dockerfile: ../Dockerfile-debian.j2
+    image: geerlingguy/docker-debian10-ansible
+    dockerfile: ../Dockerfile-debian10.j2
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -158,8 +158,8 @@ platforms:
     groups:
       - kafka_connect2
       - cluster2
-    image: geerlingguy/docker-debian9-ansible
-    dockerfile: ../Dockerfile-debian.j2
+    image: geerlingguy/docker-debian10-ansible
+    dockerfile: ../Dockerfile-debian10.j2
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -171,8 +171,8 @@ platforms:
     groups:
       - ksql2
       - cluster2
-    image: geerlingguy/docker-debian9-ansible
-    dockerfile: ../Dockerfile-debian.j2
+    image: geerlingguy/docker-debian10-ansible
+    dockerfile: ../Dockerfile-debian10.j2
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -184,8 +184,8 @@ platforms:
     groups:
       - control_center2
       - cluster2
-    image: geerlingguy/docker-debian9-ansible
-    dockerfile: ../Dockerfile-debian.j2
+    image: geerlingguy/docker-debian10-ansible
+    dockerfile: ../Dockerfile-debian10.j2
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro

@@ -25,6 +25,7 @@ The services that can be installed from this repository are:
 You can find the documentation for running CP-Ansible at https://docs.confluent.io/current/installation/cp-ansible/index.html.
 
 You can find supported configuration variables in [VARIABLES.md](docs/VARIABLES.md)
+fix-sanity
 
 ## Contributing
 
